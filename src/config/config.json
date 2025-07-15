@@ -1,7 +1,7 @@
 {
   "site": {
     "title": "DOVI-LOG",
-    "base_url": "https://github.com/Sanghyun0505",
+    "base_url": "https://github.com/hekirekiissen",
     "base_path": "/",
     "favicon": "/favicons/favicon.ico",
     "lang": "ko",
@@ -13,11 +13,11 @@
     "dark_mode": true
   },
   "metadata": {
-    "meta_author": "dovi(Sanghyun0505)",
+    "meta_author": "dovi(hekirekiissen)",
     "meta_description": "저를 감상해주세요."
   },
   "author": {
-    "name": "dovi(Sanghyun0505)",
+    "name": "dovi(hekirekiissen)",
     "avatar": "/profile.png",
     "bio": [
       "👋 안녕하세요, FE 개발자 박상현(dovi)입니다.",

@@ -6,7 +6,7 @@ import robotsTxt from "astro-robots-txt";
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://sanghyun0505.github.io",
+  site: "https://hekirekiissen.github.io",
   base: "/",
   image: {
     remotePatterns: [{ protocol: "https" }],

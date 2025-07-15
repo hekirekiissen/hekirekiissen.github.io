@@ -6,19 +6,19 @@
   "license": "MIT",
   "private": true,
   "author": {
-    "name": "dovi(Sanghyun0505)"
+    "name": "dovi(박상현)"
   },
-  "homepage": "https://github.com/Sanghyun0505/dovi.github.io",
+  "homepage": "https://github.com/hekirekiissen/dovi.github.io",
   "contributors": [
     {
-      "name": "dovi(Sanghyun0505)",
+      "name": "dovi(박상현)",
       "email": "sanghyun946&@gmail.com",
-      "url": "https://github.com/Sanghyun0505"
+      "url": "https://github.com/hekirekiissen"
     }
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/Sanghyun0505/dovi.github.io.git"
+    "url": "https://github.com/hekirekiissen/dovi.github.io.git"
   },
   "scripts": {
     "dev": "astro dev",
