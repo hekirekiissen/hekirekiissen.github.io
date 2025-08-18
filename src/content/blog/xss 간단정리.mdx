@@ -1,0 +1,33 @@
+---
+title: "xss 간단정리"
+description: "위험하네~"
+pubDate: "August 7 2025"
+heroImage: "/thumbnails/20250807.webp"
+categories: ["Tech"]
+authors: ["dovi(박상현)"]
+tags: ["xss", "Browser", "JavaScript", "React.js"]
+---
+
+공격자가 특정 웹사이트에 악성 script를 심어 유저의 브라우저에서 실행시키는 공격이다.
+
+예로, 공격자가 인스타그램 게시물을 등록할 때 내용에 아래와 같은 스크립트를 포함해 포스팅한다.
+
+```
+<script>...</<script>
+```
+
+그러고 다른 유저가 해당 게시물을 보면, 저 스크립트가 실행되어 토큰 탈취가 가능해진다. 즉, 유저의 정보를 빼올 수 있다.
+
+위 방법이 **stored xss**이다. react에선 dangerouslySetInnerHTML, JS에서 innerHTML을 사용했을 때 동작할 수 있으므로 조심하자.
+
+다른 방법으론 url에 심는 방법이다. **reflected xss**라고 하는데,
+
+```
+https://velog.io?virus=<script>...</script>
+```
+
+공격자가 url에 위 같은 script 태그를 심는다. 그리고 이미지를 누르면 해당 url로 이동하도록 하이퍼링크를 달아둔 게시물이 있다고 가정한다.
+이때 유저가 해당 url을 누르면 velog에 들어있는 자신의 정보를 탈취당할 수 있다.
+리액트 같은 라이브러리/프레임워크는 브라우저에서 요청을 보낼 때, script 태그가 들어가면 특수문자들을 인코딩하기에 xss를 차단해서 문제 없다. 하지만, 바닐라 JS는 그렇지 않아서 개발자가 직접 방어해야한다.
+
+끝.
