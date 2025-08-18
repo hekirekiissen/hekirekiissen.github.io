@@ -1,0 +1,145 @@
+---
+title: "Lexical Scope에서 Closure까지 정리"
+description: "참조가 이렇게 되는구나~!"
+pubDate: "August 18 2025"
+heroImage: "/thumbnails/20250818.webp"
+categories: ["Tech"]
+authors: ["dovi(박상현)"]
+tags: ["JavaScript", "Lexical Scope", "Lexical Environment", "Closure"]
+---
+
+### 렉시컬 스코프(정적 스코프)란
+
+코드가 **선언된 시점**에 접근 가능한 범위가 결정되는 규칙을 의미한다.
+
+```tsx
+// global은 최상위에서 선언 → 어디든지 접근 가능
+const global = "global";
+
+function outer() {
+  const outerVar = "outer";
+
+  // inner와 outerVar는 outer 안에서 선언 → outer의 변수에 접근 가능
+  function inner() {
+    console.log(global);
+    console.log(outerVar);
+  }
+}
+```
+
+그럼 아래 코드는 어떤 결과가 나올까?
+
+```tsx
+var x = 1; // global
+
+function first() {
+  var x = 10;
+  second();
+}
+
+function second() {
+  console.log(x);
+}
+
+first(); // ?
+second(); // ?
+```
+
+정답은 1이 두번 찍힌다.
+
+앞서 말했듯, JS는 코드가 선언되는 시점에 스코프가 결정된다.
+그래서 second 함수가 선언 되었을 때, 상위스코프는 최상위 스코프에 위치한 x의 값을 참조하게 된다. 그래서 first 함수에서 호출 되더라도 이미 스코프는 결정난 상태이기 때문에 1이라는 값이 찍힌다.
+
+이러한 렉시컬 스코프는 **JS가 값을 참조할 때, 동작 기반이 되는 규칙이자 원리**다.
+
+### 렉시컬 환경이란
+
+코드가 선언되어 있는 환경을 의미한다. <br/>
+내가 이해하기론 **코드블록 단위로 렉시컬 환경이 생성**되는 걸로 이해했다. <br/>
+렉시컬 환경은 2가지의 방법으로 값을 참조한다.
+
+#### 환경 레코드 참조
+
+현재 스코프의 `식별자-값`으로 매핑된 객체다.
+
+```tsx
+function example() {
+  const local = "value";
+
+  const getName = () => {
+    return "sanghyun";
+  };
+}
+```
+
+위와 같은 코드가 있으면 환경 레코드는 아래와 같이 생성된다.
+
+```json
+{
+  "local": "value",
+  "getName": [Function: getName]
+}
+```
+
+#### 외부 렉시컬 환경 참조
+
+말 그대로 현재 스코프에서 상위 스코프를 가리키는 참조다. <br/>
+이때, [[Environment]]라는 내부 슬롯을 참조해 외부 렉시컬 환경을 참조한다.
+
+그래서 특정 값을 참조할 때 우선 환경 레코드를 참조하고 해당 값이 없으면 외부 렉시컬 환경을 참조한다. <br/>
+
+### 클로저란
+
+클로저는 렉시컬 환경을 기반으로 동작한다. <br/>
+외부 함수 실행 후, 실행 컨텍스트에서 사라져도 내부 함수가 외부 함수에서 선언된 변수/함수를 참조할 수 있는 기능이다.
+
+```tsx
+function outer() {
+  const data = "preserved";
+
+  return function inner() {
+    console.log(data);
+  };
+}
+
+const closure = outer(); // ← 여기서 outer() 실행 완료
+closure(); // ← 여기서 inner() 실행
+```
+
+결과를 먼저 말하자면 `preserved`가 출력된다. <br/>
+
+그 이유를 코드동작과 함께 설명하자면,
+
+1단계: outer 함수 실행
+
+```tsx
+const closure = outer();
+```
+
+- outer 함수의 실행 컨텍스트 생성
+- outer의 렉시컬 환경에는 preserved가 저장되어 있음
+- inner 함수 생성(선언) → outer의 렉시컬 환경을 참조하도록 설정됨(렉시컬 스코프)
+- inner 함수 반환 후, outer 실행 컨텍스트 제거
+
+2단계: closure 함수 실행
+
+```tsx
+closure();
+```
+
+- inner 함수의 실행 컨텍스트 생성
+- console.log(data) 실행 → data 변수 검색 시작
+
+3단계: 변수 검색 과정
+
+1. inner의 환경 레코드에서 data 검색 → 없음
+2. inner의 외부 렉시컬 환경에서 data 검색 → 발견
+3. `preserved` 값 반환
+
+일반적인 예상: outer 실행 완료 → 모든 것이 사라짐 → undefined 반환
+
+실제상황:
+
+- 실행 컨텍스트에서만 outer 함수가 사라졌을 뿐, 메모리 상엔 계속 존재
+- 왜냐하면 inner 함수가 참조하는 외부 렉시컬 환경엔 outer 함수를 여전히 참조하고 있기 때문
+- 그래서 참조가 있으므로 outer의 렉시컬 환경은 가비지 컬렉션 되지 않음
